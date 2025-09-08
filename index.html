@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dry Bulk Cargoes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        ul { list-style-type: none; padding: 0; }
+        li { padding: 8px; border: 1px solid #ccc; margin-bottom: 5px; cursor: context-menu; }
+        #context-menu { position: absolute; background: #fff; border: 1px solid #999; display: none; z-index: 1000; }
+        #context-menu div { padding: 8px; cursor: pointer; }
+        #context-menu div:hover { background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Cargo List</h1>
+    <ul id="cargo-list"></ul>
+
+    <div id="context-menu"><div id="suitable-ships">Suitable Ships</div></div>
+
+    <script>
+        // Sample cargo data
+        const cargos = [
+            { id: 1, description: 'Iron Ore', loadPort: 'Port Hedland', laycan: '2023-09-15' },
+            { id: 2, description: 'Coal', loadPort: 'Richards Bay', laycan: '2023-09-20' },
+            { id: 3, description: 'Grain', loadPort: 'New Orleans', laycan: '2023-09-25' }
+        ];
+
+        const cargoList = document.getElementById('cargo-list');
+
+        cargos.forEach(cargo => {
+            const li = document.createElement('li');
+            li.textContent = `${cargo.description} - ${cargo.loadPort} - Laycan: ${cargo.laycan}`;
+            li.dataset.loadPort = cargo.loadPort;
+            li.dataset.laycan = cargo.laycan;
+            cargoList.appendChild(li);
+        });
+
+        // Context menu logic
+        const contextMenu = document.getElementById('context-menu');
+        let selectedCargo = null;
+
+        document.addEventListener('click', () => {
+            contextMenu.style.display = 'none';
+        });
+
+        cargoList.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            const target = e.target.closest('li');
+            if (!target) return;
+            selectedCargo = target;
+            contextMenu.style.top = `${e.pageY}px`;
+            contextMenu.style.left = `${e.pageX}px`;
+            contextMenu.style.display = 'block';
+        });
+
+        document.getElementById('suitable-ships').addEventListener('click', () => {
+            if (!selectedCargo) return;
+            const loadPort = selectedCargo.dataset.loadPort;
+            const laycan = selectedCargo.dataset.laycan;
+            window.location.href = `ship_eta.html?loadPort=${encodeURIComponent(loadPort)}&laycan=${encodeURIComponent(laycan)}`;
+        });
+    </script>
+</body>
+</html>
